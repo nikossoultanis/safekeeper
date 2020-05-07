@@ -6,9 +6,12 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+from datetime import datetime
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from domain import SecurityGuy, EmployeeSchedule, CentralOffice
+# TODO:
+# - add text listener for text input pin and call checkPinValidity
 
 class Ui_PINEntryWidget(object):
 
@@ -16,13 +19,54 @@ class Ui_PINEntryWidget(object):
         self.ctx = ctx
         self.callback = callback
 
+        self.pin = None
+        self.pin_tries = 0
+        self.isPinOk = False
+
     def _cancel_click(self):
         self.callback(False)
         self.__window.close()
 
+    def showMessage(self, message):
+        # todo: show something on the ui
+        pass
+
     def _ok_click(self):
-        self.callback(True)
-        self.__window.close()
+        # thats the click listener
+        self.ok()
+
+    def checkPinValidity(self):
+        pin_exists = SecurityGuy.doesPinExist(self.pin)
+        if not pin_exists:
+            self.pin_tries+=1
+            self.isPinOk = False
+            if self.pin_tries < 3:
+                self.showMessage(f'Pin incorrect, tries remaining: {3-self.pin_tries}')
+            else:
+                # todo: also show popup message
+                sector = None # todo set proper value through some context object
+                CentralOffice.notifyIncorrectPin(datetime.now(), self.pin, sector)
+                self.callback(False)
+                self.__window.close()
+
+        pin_exists = EmployeeSchedule.isPinActiveNow(self.pin)
+        if not pin_exists:
+            self.pin_tries+=1
+            self.isPinOk = False
+            if self.pin_tries < 3:
+                self.showMessage(f'Pin incorrect, tries remaining: {3-self.pin_tries}')
+            else:
+                # todo: also show popup message
+                sector = None # todo set proper value through some context object
+                CentralOffice.notifyIncorrectPin(datetime.now(), self.pin, sector)
+                self.callback(False)
+                self.__window.close()
+
+    def ok(self):
+        # user pressed ok
+        if self.pin is not None and self.isPinOk:
+            self.callback(True)
+            self.__window.close()
 
     def setupUi(self, PINEntryWidget):
         self.__window = PINEntryWidget
