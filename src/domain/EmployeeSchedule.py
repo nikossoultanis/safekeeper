@@ -9,6 +9,10 @@ class EmployeeSchedule:
         return True
 
     @staticmethod
+    def isCurrentShiftActive(shift):
+        return True
+
+    @staticmethod
     def isRegistered():
         #todo: implement later
         return False

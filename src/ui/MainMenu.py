@@ -22,6 +22,9 @@ class Ui_MainMenuWindow(object):
     def __init__(self, ctx):
         self.ctx = ctx
 
+    def showNotification(self, text):
+        print (f'Main Menu Notification: {text}')
+
     def _activity_log_clicked(self):
         # sample_notification(self.ctx)
 
