@@ -23,3 +23,4 @@ from .AccessLog import AccessLog
 from .IncidentSubmission import IncidentSubmission
 from .NotificationSubsystem import NotificationSubsystem
 from .CentralOffice import CentralOffice
+from .DocumentAttachment import DocumentAttachment

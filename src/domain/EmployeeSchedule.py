@@ -7,3 +7,8 @@ class EmployeeSchedule:
             return False
         
         return True
+
+    @staticmethod
+    def isRegistered():
+        #todo: implement later
+        return False
