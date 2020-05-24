@@ -1,19 +1,78 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'InsertUserWidget.ui'
-#
-# Created by: PyQt5 UI code generator 5.14.2
-#
-# WARNING! All changes made in this file will be lost!
-
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from .pin_util import pin_authorization
+from domain import EmployeeSchedule
+from domain import AccessLevel
+from domain import DocumentAttachment
+from domain import RFIDCardData
 
 class Ui_InsertUserWidget(object):
 
     def __init__(self, ctx):
         self.ctx = ctx
+
+    def insertData(self):
+        # user inserted all the data
+        # start sequence diagram implementation from here
+        if self.isEmployee:
+            registered = EmployeeSchedule.isRegistered()
+            if registered:
+                self.showMessage('already registered employee')
+                return
+            
+            accessLevelValid = AccessLevel.isAccessLevelValid(True, 1) # todo: add correct params
+            if not accessLevelValid:
+                self.showMessage('invalid access level')
+                return
+
+            fullNameValid = self.isFullNameValid()
+            if not fullNameValid:
+                self.showMessage('invalid full name')
+                return
+            
+            expiryDateValid = self.isExpiryDateValid()
+            if not expiryDateValid:
+                self.showMessage('invalid expiry date')
+                return
+
+        # end if employee
+        self.pinAuthorization()    
+
+
+    def isEmployee(self):
+        return not self.GuestCheckBox.isChecked()
+    
+    def pinAuthorization(self):
+        pin_authorization(self.ctx, self._pinCallback)
+
+    def _pinCallback(self, result):
+        if result:
+            # todo: successful auth
+            documentAttached = self.isDocumentAttached()
+            if documentAttached and self.isEmployee():
+                atch = DocumentAttachment(str(self.NotesText.text()))
+                atch.save()
+            
+            # write rfid card
+            # write access logs
+            # show menu
+        else:
+            self.showMessage('pin auth fail')
+        
+    def showMessage(self, text):
+        # todo: show message somewhere
+        print(text)
+
+    def isFullNameValid(self):
+        name = str(self.NameInput.text)
+        # todo: add more checks
+        return ' ' in name 
+
+    def isExpiryDateValid(self):
+        return True
+
+    def isDocumentAttached(self):
+        notes = str(self.NotesText.text())
+        return notes is not None and len(notes) > 0        
 
     def setupUi(self, InsertUserWidget):
         InsertUserWidget.setObjectName("InsertUserWidget")
