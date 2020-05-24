@@ -8,3 +8,6 @@ class SecurityIncident:
         self.employeeid = employeeid
         self.cause = cause
         self.incidentType = incidentType
+
+    def setDetails(self, details):
+        self.details = details
