@@ -6,3 +6,7 @@ class AccessLog:
     @staticmethod
     def writeCheckInOut(user, isCheckIn):
         print(f'WriteCheckInOut {user}, check in: {isCheckIn}')
+
+    @staticmethod
+    def writeIncidentToAccessLogs(incident):
+        print(f'Write incident to access logs: {incident}')
